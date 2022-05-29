@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SaleObjects count="4">
+
+    <SaleObject type="house" id="173311">
+        <sizeSqm>300</sizeSqm>
+        <startingPrice>3.250.000</startingPrice>
+        <address>
+            <city>Helsinki</city>
+            <street>Notticompriheensiple 5</street>
+            <floor/>
+        </address>
+    </SaleObject>
+
+</SaleObjects>
