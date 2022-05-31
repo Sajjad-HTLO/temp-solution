@@ -3,6 +3,17 @@
  */
 public class ItemModel {
 
+    public ItemModel() {
+    }
+
+    public ItemModel(int pricePerSquareMeter, String city, String street, int squareMeters, Integer floor) {
+        this.pricePerSquareMeter = pricePerSquareMeter;
+        this.city = city;
+        this.street = street;
+        this.squareMeters = squareMeters;
+        this.floor = floor;
+    }
+
     private int pricePerSquareMeter;
     private String city;
     private String street;

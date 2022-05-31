@@ -1,11 +1,8 @@
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
+
 import java.util.*;
 
 public class Application {
 
-    private final static String FILE_PREFIX = "resources/";
 
     public static void main(String[] args) {
         SaleObjectConsumer saleObjectConsumer = null;
@@ -15,7 +12,7 @@ public class Application {
         Set<String> fileNames = new HashSet<>(Arrays.asList(args[1].split(",")));
 
         // First validate the file names
-        if (fileNames.stream().anyMatch(path -> !isValidFile(path)))
+        if (fileNames.stream().anyMatch(path -> !Helper.isValidFile(path)))
             throw new SaleObjectConsumer.TechnicalException();
 
         // Then parse the files
@@ -30,16 +27,13 @@ public class Application {
                 Collections.sort(parsedObjects, comparator);
 
                 System.out.println();
-            }
-        }
-    }
+            } else if (fileName.endsWith("json")) {
+                ItemParser itemParser = new JsonItemParser();
 
-    private static boolean isValidFile(String path) {
-        try {
-            return Files.exists(Paths.get(FILE_PREFIX + path));
-            // Check the file is valid
-        } catch (InvalidPathException | NullPointerException ex) {
-            return false;
+                List<ItemModel> itemModels = itemParser.getParsedRecords(ItemParser.FILE_PREFIX.concat(fileName));
+
+                System.out.println();
+            }
         }
     }
 }

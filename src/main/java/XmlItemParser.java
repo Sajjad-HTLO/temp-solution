@@ -9,12 +9,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class XmlItemParser implements ItemParser {
 
@@ -55,7 +51,7 @@ public class XmlItemParser implements ItemParser {
                                 itemModel.setSquareMeters(Integer.parseInt(current.getTextContent()));
                             if (current.getNodeName().equalsIgnoreCase("startingPrice")) {
                                 // price/sqm
-                                itemModel.setPricePerSquareMeter(getPricePerSquareMeter(current.getTextContent(), itemModel.getSquareMeters()));
+                                itemModel.setPricePerSquareMeter(Helper.getPricePerSquareMeter(current.getTextContent(), itemModel.getSquareMeters()));
                             }
 
                             if (current.getNodeName().equalsIgnoreCase("address")) {
@@ -73,7 +69,6 @@ public class XmlItemParser implements ItemParser {
                                             itemModel.setFloor(!addressPart.getTextContent().isEmpty() ? Integer.valueOf(addressPart.getTextContent()) : null);
                                     }
                                 }
-
                             }
                         }
                     }
@@ -89,19 +84,5 @@ public class XmlItemParser implements ItemParser {
         }
 
         return parsedItemModels;
-    }
-
-    private int getPricePerSquareMeter(String textContent, int squareMeters) {
-        NumberFormat format = NumberFormat.getInstance(Locale.GERMAN);
-        float value = 0;
-        try {
-            value = format.parse(textContent).floatValue() / squareMeters;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return new BigDecimal(value)
-                .multiply(new BigDecimal("1000"))
-                .intValue();
     }
 }
