@@ -32,4 +32,11 @@ public class Helper {
                 .multiply(new BigDecimal("1000"))
                 .intValue();
     }
+
+    public static ItemModel.ItemType resolveType(String type) {
+        if (type.equalsIgnoreCase("apt"))
+            return ItemModel.ItemType.APPARTEMENT;
+        else
+            return ItemModel.ItemType.HOUSE;
+    }
 }

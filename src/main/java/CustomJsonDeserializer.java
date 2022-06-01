@@ -21,12 +21,13 @@ public class CustomJsonDeserializer extends StdDeserializer {
     @Override
     public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         List<ItemModel> result = new ArrayList<>();
-        ItemModel itemModel = null;
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 
         ArrayNode arrayNode = (ArrayNode) node.get("saleObjects");
 
         for (JsonNode jsonNode : arrayNode) {
+            ItemModel.ItemType type = Helper.resolveType(jsonNode.get("type").textValue());
+
             int sqmSize = jsonNode.get("sizeSqm").asInt();
             String startingPrice = jsonNode.get("startingPrice").asText();
 
@@ -41,7 +42,7 @@ public class CustomJsonDeserializer extends StdDeserializer {
             if (addressNode.get("floor") != null)
                 floor = addressNode.get("floor").asInt();
 
-            itemModel = new ItemModel(pricePerSquare, city, street, sqmSize, floor);
+            ItemModel itemModel = new ItemModel(type, pricePerSquare, city, street, sqmSize, floor);
             result.add(itemModel);
         }
 

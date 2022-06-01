@@ -3,7 +3,6 @@ import java.util.*;
 
 public class Application {
 
-
     public static void main(String[] args) {
         SaleObjectConsumer saleObjectConsumer = null;
 
@@ -19,12 +18,9 @@ public class Application {
         for (String fileName : fileNames) {
             if (fileName.endsWith(".xml")) {
                 ItemParser itemParser = new XmlItemParser();
-                List<ItemModel> parsedObjects = itemParser.getParsedRecords(fileName);
+                List<ItemModel> itemModels = itemParser.getParsedRecords(fileName);
 
-                SaleObjectConsumer.PriorityOrderAttribute orderAttribute = SaleObjectConsumer.PriorityOrderAttribute.PricePerSquareMeter;
-
-                ItemComparator comparator = new ItemComparator(orderAttribute);
-                Collections.sort(parsedObjects, comparator);
+                startTheFlow(itemModels, saleObjectConsumer);
 
                 System.out.println();
             } else if (fileName.endsWith("json")) {
@@ -32,8 +28,31 @@ public class Application {
 
                 List<ItemModel> itemModels = itemParser.getParsedRecords(ItemParser.FILE_PREFIX.concat(fileName));
 
+                startTheFlow(itemModels, saleObjectConsumer);
+
                 System.out.println();
             }
         }
+    }
+
+    private static List<ItemModel> orderItems(List<ItemModel> itemModels, SaleObjectConsumer.PriorityOrderAttribute orderAttribute) {
+        ItemComparator comparator = new ItemComparator(orderAttribute);
+        Collections.sort(itemModels, comparator);
+
+        return itemModels;
+    }
+
+    private static void startTheFlow(List<ItemModel> itemModels, SaleObjectConsumer objectConsumer) {
+        List<ItemModel> orderedItems = orderItems(itemModels, objectConsumer.getPriorityOrderAttribute());
+
+        // Second, call startSaleObjectTransaction()
+        objectConsumer.startSaleObjectTransaction();
+
+        // Third, for each item, call reportSaleObject()
+        orderedItems.forEach(item -> objectConsumer.reportSaleObject(
+                item.getSquareMeters(), String.valueOf(item.getPricePerSquareMeter()), item.getCity(), item.getStreet(), item.getFloor()));
+
+        // Finally, call the commit
+        objectConsumer.commitSaleObjectTransaction();
     }
 }

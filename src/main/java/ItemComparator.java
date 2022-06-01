@@ -17,7 +17,7 @@ public class ItemComparator implements Comparator<ItemModel> {
             case City:
                 return o1.getCity().compareTo(o2.getCity());
             case PricePerSquareMeter:
-                return (int) (o1.getPricePerSquareMeter() - o2.getPricePerSquareMeter());
+                return o1.getPricePerSquareMeter() - o2.getPricePerSquareMeter();
         }
 
         throw new SaleObjectConsumer.TechnicalException();

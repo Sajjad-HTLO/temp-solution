@@ -6,7 +6,8 @@ public class ItemModel {
     public ItemModel() {
     }
 
-    public ItemModel(int pricePerSquareMeter, String city, String street, int squareMeters, Integer floor) {
+    public ItemModel(ItemType type, int pricePerSquareMeter, String city, String street, int squareMeters, Integer floor) {
+        this.type = type;
         this.pricePerSquareMeter = pricePerSquareMeter;
         this.city = city;
         this.street = street;
@@ -14,6 +15,7 @@ public class ItemModel {
         this.floor = floor;
     }
 
+    private ItemType type;
     private int pricePerSquareMeter;
     private String city;
     private String street;
@@ -52,11 +54,23 @@ public class ItemModel {
         this.floor = floor;
     }
 
-    public float getPricePerSquareMeter() {
+    public int getPricePerSquareMeter() {
         return pricePerSquareMeter;
     }
 
     public void setPricePerSquareMeter(int pricePerSquareMeter) {
         this.pricePerSquareMeter = pricePerSquareMeter;
+    }
+
+    public ItemType getType() {
+        return type;
+    }
+
+    public void setType(ItemType type) {
+        this.type = type;
+    }
+
+    enum ItemType {
+        APPARTEMENT, HOUSE
     }
 }

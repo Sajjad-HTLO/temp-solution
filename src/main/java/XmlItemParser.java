@@ -18,28 +18,16 @@ public class XmlItemParser implements ItemParser {
     public List<ItemModel> getParsedRecords(String fileName) {
         List<ItemModel> parsedItemModels = new ArrayList<>();
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
-            // process XML securely, avoid attacks like XML External Entities (XXE)
-            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-
-            // parse XML file
-            DocumentBuilder db = dbf.newDocumentBuilder();
-
-            Document doc = db.parse(new File(FILE_PREFIX.concat(fileName)));
+            Document doc = getDocumentInstance(fileName);
 
             Node sibling = doc.getDocumentElement().getFirstChild().getNextSibling();
             while (sibling != null) {
 
                 if (sibling.getNodeType() == Node.ELEMENT_NODE) {
-
                     ItemModel itemModel = new ItemModel();
 
-                    String id = sibling.getAttributes().getNamedItem("id").toString();
-                    String type = sibling.getAttributes().getNamedItem("type").toString();
-
-                    System.out.println("id: " + id);
-                    System.out.println("type: " + type);
+                    itemModel.setType(Helper.resolveType(sibling.getAttributes().getNamedItem("type").getTextContent()));
 
                     NodeList nodeList = sibling.getChildNodes();
 
@@ -54,35 +42,50 @@ public class XmlItemParser implements ItemParser {
                                 itemModel.setPricePerSquareMeter(Helper.getPricePerSquareMeter(current.getTextContent(), itemModel.getSquareMeters()));
                             }
 
-                            if (current.getNodeName().equalsIgnoreCase("address")) {
-                                // Got further down
-                                NodeList address = current.getChildNodes();
-                                Node addressPart;
-                                for (int j = 0; j < address.getLength(); j++) {
-                                    addressPart = address.item(j);
-                                    if (addressPart.getNodeType() == Node.ELEMENT_NODE) {
-                                        if (addressPart.getNodeName().equalsIgnoreCase("city"))
-                                            itemModel.setCity(addressPart.getTextContent());
-                                        if (addressPart.getNodeName().equalsIgnoreCase("street"))
-                                            itemModel.setStreet(addressPart.getTextContent());
-                                        if (addressPart.getNodeName().equalsIgnoreCase("floor"))
-                                            itemModel.setFloor(!addressPart.getTextContent().isEmpty() ? Integer.valueOf(addressPart.getTextContent()) : null);
-                                    }
-                                }
-                            }
+                            // Go further down to resolve address
+                            resolveAddress(current, itemModel);
                         }
                     }
 
+                    // Add each object to the collection
                     parsedItemModels.add(itemModel);
                 }
 
                 sibling = sibling.getNextSibling();
             }
-        } catch (
-                ParserConfigurationException | IOException | SAXException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
         }
 
         return parsedItemModels;
+    }
+
+    private Document getDocumentInstance(String fileName) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        // parse XML file
+        DocumentBuilder db = dbf.newDocumentBuilder();
+
+        // Create a document instance
+        return db.parse(new File(FILE_PREFIX.concat(fileName)));
+    }
+
+    private void resolveAddress(Node current, ItemModel itemModel) {
+        if (current.getNodeName().equalsIgnoreCase("address")) {
+            NodeList address = current.getChildNodes();
+            Node addressPart;
+            for (var j = 0; j < address.getLength(); j++) {
+                addressPart = address.item(j);
+                if (addressPart.getNodeType() == Node.ELEMENT_NODE) {
+                    if (addressPart.getNodeName().equalsIgnoreCase("city"))
+                        itemModel.setCity(addressPart.getTextContent());
+                    if (addressPart.getNodeName().equalsIgnoreCase("street"))
+                        itemModel.setStreet(addressPart.getTextContent());
+                    if (addressPart.getNodeName().equalsIgnoreCase("floor"))
+                        itemModel.setFloor(!addressPart.getTextContent().isEmpty() ? Integer.valueOf(addressPart.getTextContent()) : null);
+                }
+            }
+        }
     }
 }
