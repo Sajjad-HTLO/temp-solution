@@ -21,6 +21,7 @@ public class ItemModel {
     private String street;
     private int squareMeters;
     private Integer floor;
+    private String startingPrice;
 
     public String getCity() {
         return city;
@@ -68,6 +69,14 @@ public class ItemModel {
 
     public void setType(ItemType type) {
         this.type = type;
+    }
+
+    public String getStartingPrice() {
+        return startingPrice;
+    }
+
+    public void setStartingPrice(String startingPrice) {
+        this.startingPrice = startingPrice;
     }
 
     enum ItemType {

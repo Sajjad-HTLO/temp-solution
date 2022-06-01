@@ -8,11 +8,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * Json parser.
+ *
+ * @author Sajad
+ */
 public class JsonItemParser implements ItemParser {
 
     @Override
     public List<ItemModel> getParsedRecords(String fileName) {
-
         try {
             String jsonContent = new String(Files.readAllBytes(Paths.get(fileName)));
 

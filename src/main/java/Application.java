@@ -27,12 +27,13 @@ public class Application {
         // Then parse the files
         for (String fileName : fileNames) {
             if (Helper.isXmlFile(fileName)) {
-                ItemParser itemParser = new XmlItemParser();
-                List<ItemModel> itemModels = itemParser.getParsedRecords(fileName);
+                ItemParser parser = new SaxXmlParser();
 
-//                startTheFlow(itemModels, saleObjectConsumer);
+                List<ItemModel> itemModels = parser.getParsedRecords(fileName);
 
                 System.out.println();
+
+//                startTheFlow(itemModels, saleObjectConsumer);
             } else if (Helper.isJsonFile(fileName)) {
                 ItemParser itemParser = new JsonItemParser();
 
