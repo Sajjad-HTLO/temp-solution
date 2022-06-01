@@ -1,8 +1,18 @@
 
 import java.util.*;
 
+/**
+ * Main application is responsible to validate arguments, parse the data, and start the main flow.
+ *
+ * @author Sajad
+ */
 public class Application {
 
+    /**
+     * Main entry point of the application to validate, parse the arguments and finally call the main flow.
+     *
+     * @param args Given line arguments.
+     */
     public static void main(String[] args) {
         SaleObjectConsumer saleObjectConsumer = null;
 
@@ -16,25 +26,32 @@ public class Application {
 
         // Then parse the files
         for (String fileName : fileNames) {
-            if (fileName.endsWith(".xml")) {
+            if (Helper.isXmlFile(fileName)) {
                 ItemParser itemParser = new XmlItemParser();
                 List<ItemModel> itemModels = itemParser.getParsedRecords(fileName);
 
-                startTheFlow(itemModels, saleObjectConsumer);
+//                startTheFlow(itemModels, saleObjectConsumer);
 
                 System.out.println();
-            } else if (fileName.endsWith("json")) {
+            } else if (Helper.isJsonFile(fileName)) {
                 ItemParser itemParser = new JsonItemParser();
 
                 List<ItemModel> itemModels = itemParser.getParsedRecords(ItemParser.FILE_PREFIX.concat(fileName));
 
-                startTheFlow(itemModels, saleObjectConsumer);
+//                startTheFlow(itemModels, saleObjectConsumer);
 
                 System.out.println();
             }
         }
     }
 
+    /**
+     * Order given {@code itemModels} based on the {@code orderAttribute}
+     *
+     * @param itemModels     Collection of {@linkplain ItemModel} objects.
+     * @param orderAttribute Given order attribute to order upon it.
+     * @return Ordered version of given {@code itemModels}.
+     */
     private static List<ItemModel> orderItems(List<ItemModel> itemModels, SaleObjectConsumer.PriorityOrderAttribute orderAttribute) {
         ItemComparator comparator = new ItemComparator(orderAttribute);
         Collections.sort(itemModels, comparator);
@@ -42,6 +59,12 @@ public class Application {
         return itemModels;
     }
 
+    /**
+     * Start the main flow by taking the required steps sequentially.
+     *
+     * @param itemModels     Collection of {@linkplain ItemModel} objects.
+     * @param objectConsumer Given consumer instance.
+     */
     private static void startTheFlow(List<ItemModel> itemModels, SaleObjectConsumer objectConsumer) {
         List<ItemModel> orderedItems = orderItems(itemModels, objectConsumer.getPriorityOrderAttribute());
 

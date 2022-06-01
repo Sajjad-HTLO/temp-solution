@@ -39,4 +39,12 @@ public class Helper {
         else
             return ItemModel.ItemType.HOUSE;
     }
+
+    static boolean isXmlFile(String fileName) {
+        return fileName.endsWith(".xml");
+    }
+
+    static boolean isJsonFile(String fileName) {
+        return fileName.endsWith(".json");
+    }
 }

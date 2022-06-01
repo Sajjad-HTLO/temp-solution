@@ -1,4 +1,5 @@
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -20,38 +21,43 @@ public class XmlItemParser implements ItemParser {
 
         try {
             Document doc = getDocumentInstance(fileName);
+            Element docElement = doc.getDocumentElement();
 
-            Node sibling = doc.getDocumentElement().getFirstChild().getNextSibling();
-            while (sibling != null) {
+            int count = Integer.parseInt(docElement.getAttribute("count"));
 
-                if (sibling.getNodeType() == Node.ELEMENT_NODE) {
-                    ItemModel itemModel = new ItemModel();
+            if (count > 2) {
+                NodeList childNodes = docElement.getChildNodes();
 
-                    itemModel.setType(Helper.resolveType(sibling.getAttributes().getNamedItem("type").getTextContent()));
+                for (int i = 0; i < childNodes.getLength(); i++) {
+                    Node each = childNodes.item(i);
 
-                    NodeList nodeList = sibling.getChildNodes();
+                    if (each.getNodeType() == Node.ELEMENT_NODE) {
+                        ItemModel itemModel = new ItemModel();
 
-                    for (int i = 0; i < nodeList.getLength(); i++) {
-                        Node current = nodeList.item(i);
+                        itemModel.setType(Helper.resolveType(each.getAttributes().getNamedItem("type").getTextContent()));
 
-                        if (current.getNodeType() == Node.ELEMENT_NODE) {
-                            if (current.getNodeName().equalsIgnoreCase("sizeSqm"))
-                                itemModel.setSquareMeters(Integer.parseInt(current.getTextContent()));
-                            if (current.getNodeName().equalsIgnoreCase("startingPrice")) {
-                                // price/sqm
-                                itemModel.setPricePerSquareMeter(Helper.getPricePerSquareMeter(current.getTextContent(), itemModel.getSquareMeters()));
+                        NodeList nodeList = each.getChildNodes();
+
+                        for (int j = 0; j < nodeList.getLength(); j++) {
+                            Node current = nodeList.item(j);
+
+                            if (current.getNodeType() == Node.ELEMENT_NODE) {
+                                if (current.getNodeName().equalsIgnoreCase("sizeSqm"))
+                                    itemModel.setSquareMeters(Integer.parseInt(current.getTextContent()));
+                                if (current.getNodeName().equalsIgnoreCase("startingPrice")) {
+                                    // price/sqm
+                                    itemModel.setPricePerSquareMeter(Helper.getPricePerSquareMeter(current.getTextContent(), itemModel.getSquareMeters()));
+                                }
+
+                                // Go further down to resolve address
+                                resolveAddress(current, itemModel);
                             }
-
-                            // Go further down to resolve address
-                            resolveAddress(current, itemModel);
                         }
+
+                        // Add each object to the collection
+                        parsedItemModels.add(itemModel);
                     }
-
-                    // Add each object to the collection
-                    parsedItemModels.add(itemModel);
                 }
-
-                sibling = sibling.getNextSibling();
             }
         } catch (ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
