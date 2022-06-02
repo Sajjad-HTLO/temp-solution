@@ -20,7 +20,7 @@ public class Helper {
     }
 
     public static int getPricePerSquareMeter(String priceStr, int squareMeters) {
-        NumberFormat format = NumberFormat.getInstance(Locale.GERMAN);
+        var format = NumberFormat.getInstance(Locale.GERMAN);
         float value = 0;
         try {
             value = format.parse(priceStr).floatValue() / squareMeters;
@@ -33,6 +33,12 @@ public class Helper {
                 .intValue();
     }
 
+    /**
+     * Resolves the type of the parsed item.
+     *
+     * @param type String representation of the item.
+     * @return An instance of {@linkplain ItemModel.ItemType}
+     */
     public static ItemModel.ItemType resolveType(String type) {
         if (type.equalsIgnoreCase("apt"))
             return ItemModel.ItemType.APPARTEMENT;

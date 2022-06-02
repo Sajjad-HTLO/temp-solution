@@ -11,15 +11,10 @@ public class ItemComparator implements Comparator<ItemModel> {
 
     @Override
     public int compare(ItemModel o1, ItemModel o2) {
-        switch (orderAttribute) {
-            case SquareMeters:
-                return o1.getSquareMeters() - o2.getSquareMeters();
-            case City:
-                return o1.getCity().compareTo(o2.getCity());
-            case PricePerSquareMeter:
-                return o1.getPricePerSquareMeter() - o2.getPricePerSquareMeter();
-        }
-
-        throw new SaleObjectConsumer.TechnicalException();
+        return switch (orderAttribute) {
+            case SquareMeters -> o1.getSquareMeters() - o2.getSquareMeters();
+            case City -> o1.getCity().compareTo(o2.getCity());
+            case PricePerSquareMeter -> o1.getPricePerSquareMeter() - o2.getPricePerSquareMeter();
+        };
     }
 }

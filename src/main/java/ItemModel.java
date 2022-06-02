@@ -6,15 +6,7 @@ public class ItemModel {
     public ItemModel() {
     }
 
-    public ItemModel(ItemType type, int pricePerSquareMeter, String city, String street, int squareMeters, Integer floor) {
-        this.type = type;
-        this.pricePerSquareMeter = pricePerSquareMeter;
-        this.city = city;
-        this.street = street;
-        this.squareMeters = squareMeters;
-        this.floor = floor;
-    }
-
+    private int id;
     private ItemType type;
     private int pricePerSquareMeter;
     private String city;
@@ -77,6 +69,14 @@ public class ItemModel {
 
     public void setStartingPrice(String startingPrice) {
         this.startingPrice = startingPrice;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     enum ItemType {

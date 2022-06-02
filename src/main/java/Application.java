@@ -16,13 +16,13 @@ public class Application {
     public static void main(String[] args) {
         SaleObjectConsumer saleObjectConsumer = null;
 
-        if (!args[0].equals("-file")) throw new SaleObjectConsumer.TechnicalException();
+        if (!args[0].equals("-file")) throw new IllegalArgumentException("Missing file argument.");
 
         Set<String> fileNames = new HashSet<>(Arrays.asList(args[1].split(",")));
 
         // First validate the file names
         if (fileNames.stream().anyMatch(path -> !Helper.isValidFile(path)))
-            throw new SaleObjectConsumer.TechnicalException();
+            throw new IllegalArgumentException("Invalid file");
 
         // Then parse the files
         for (String fileName : fileNames) {
@@ -35,7 +35,7 @@ public class Application {
 
 //                startTheFlow(itemModels, saleObjectConsumer);
             } else if (Helper.isJsonFile(fileName)) {
-                ItemParser itemParser = new JsonItemParser();
+                ItemParser itemParser = new StreamingJsonParser();
 
                 List<ItemModel> itemModels = itemParser.getParsedRecords(ItemParser.FILE_PREFIX.concat(fileName));
 
